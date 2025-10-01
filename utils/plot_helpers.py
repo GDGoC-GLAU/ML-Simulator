@@ -10,12 +10,16 @@ def plot_regression_line(X, y, model):
     plt.legend()
     return plt
 
-def plot_confusion_matrix(y_true, y_pred, labels):
+def plot_confusion_matrix(y_true, y_pred, labels = None, annotate=True, cmap="Blues"):
     cm = confusion_matrix(y_true, y_pred)
-    plt.figure()
-    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=labels, yticklabels=labels)
+    if labels is None:
+        labels = list(range(cm.shape[0]))
+    plt.figure(figsize=(6,5))
+    sns.heatmap(cm, annot=annotate, fmt="d", cmap=cmap, xticklabels=labels, yticklabels=labels)
     plt.xlabel("Predicted")
     plt.ylabel("Actual")
+    plt.title("Confusion Matrix")
+    plt.tight_layout()
     return plt
 
 def plot_roc_curve(y_true, y_scores):
