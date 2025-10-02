@@ -3,3 +3,8 @@ scikit-learn
 matplotlib
 seaborn
 numpy
+fastapi
+uvicorn[standard]
+pydantic
+requests
+httpx
