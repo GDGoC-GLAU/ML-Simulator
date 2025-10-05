@@ -26,3 +26,30 @@ def plot_roc_curve(y_true, y_scores):
     plt.plot([0, 1], [0, 1], linestyle="--")
     plt.legend()
     return plt
+
+
+def plot_roc_curve(y_true, y_scores):
+    """
+    Plot ROC curve using true labels and predicted scores.
+
+    Args:
+        y_true (array-like): True binary labels.
+        y_scores (array-like): Model predicted probabilities or scores.
+
+    Returns:
+        plt: Matplotlib plot object for Streamlit display.
+    """
+    fpr, tpr, _ = roc_curve(y_true, y_scores)
+    roc_auc = auc(fpr, tpr)
+    plt.figure()
+    plt.plot(fpr, tpr, label=f"AUC = {roc_auc:.2f}")
+    plt.plot([0, 1], [0, 1], linestyle="--")
+    plt.legend()
+    return plt
+
+def plot_feature_importance(importances, feature_names):
+    plt.figure()
+    sns.barplot(x=importances, y=feature_names)
+    plt.xlabel("Importance")
+    plt.ylabel("Feature")
+    return plt
