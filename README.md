@@ -1,12 +1,23 @@
-# 🤖 ML Model Simulator
+# � ML Simulator
 
-A Streamlit-based platform to explore basic ML models interactively, now with REST API support!
+ML Simulator is an interactive web application built with **Streamlit** that allows users to **visualize, train, and understand popular Machine Learning algorithms** in a simple and intuitive way. It also provides a **REST API** for external model access.
 
 ## Features
-- 📈 Linear Regression with adjustable parameters
-- 📊 Logistic Regression with decision boundary visualization
-- 🔌 REST API for external model access
-- ✅ Easy to extend with new models
+-Interactive simulation of ML algorithms  
+-Adjustable hyperparameters for each model  
+-Visualization of predictions and decision boundaries  
+-Evaluation metrics including Confusion Matrix and ROC Curve  
+-REST API for external model access  
+-Clean and modular code structure  
+-Easy to extend with new models
+
+## Supported Algorithms
+| Category       | Algorithms                                                    |
+| -------------- | -------------------------------------------------------------- |
+| Classification | Logistic Regression, Decision Tree, Random Forest, K-Nearest Neighbors (KNN) |
+| Regression     | Linear Regression, Polynomial Regression                     |
+| Clustering     | K-Means                                                       |
+| Metrics        | Confusion Matrix, ROC Curve, Accuracy, AUC                    |
 
 ## How to Run
 
