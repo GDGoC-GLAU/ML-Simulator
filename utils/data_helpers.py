@@ -1,30 +1,45 @@
-# utils/data_helpers.py
-
-from sklearn.datasets import make_regression
+from sklearn.datasets import make_classification
 import pandas as pd
 
-def generate_sample_regression(n_samples=100, n_features=1, noise=0.0, random_state=None):
+def generate_sample_classification_data(
+    n_samples: int = 100,
+    n_features: int = 4,
+    n_informative: int = 2,
+    n_classes: int = 2,
+    random_state: int = 42
+) -> pd.DataFrame:
     """
-    Generate a sample regression dataset.
+    Generates a synthetic classification dataset.
 
-    Parameters:
-        n_samples (int): Number of data points.
-        n_features (int): Number of features.
-        noise (float): Standard deviation of Gaussian noise added to the output.
-        random_state (int or None): Random seed for reproducibility.
+    Parameters
+    ----------
+    n_samples : int
+        Number of samples (rows) to generate.
+    n_features : int
+        Total number of input features.
+    n_informative : int
+        Number of informative features used to build the target variable.
+    n_classes : int
+        Number of classes for classification.
+    random_state : int
+        Random seed for reproducibility.
 
-    Returns:
-        X (pd.DataFrame): Feature dataframe of shape (n_samples, n_features)
-        y (pd.Series): Target variable of shape (n_samples,)
+    Returns
+    -------
+    pd.DataFrame
+        A DataFrame with feature columns (X1, X2, …) and target column 'y'.
     """
-    X, y = make_regression(
+    X, y = make_classification(
         n_samples=n_samples,
         n_features=n_features,
-        noise=noise,
+        n_informative=n_informative,
+        n_redundant=0,
+        n_repeated=0,
+        n_classes=n_classes,
         random_state=random_state
     )
-    # Convert to pandas for convenience
-    X_df = pd.DataFrame(X, columns=[f'feature_{i+1}' for i in range(n_features)])
-    y_series = pd.Series(y, name='target')
-    
-    return X_df, y_series
+
+    feature_cols = [f"X{i+1}" for i in range(n_features)]
+    df = pd.DataFrame(X, columns=feature_cols)
+    df["y"] = y
+    return df
