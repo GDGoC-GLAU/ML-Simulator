@@ -1,28 +1,32 @@
 import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.metrics import confusion_matrix, roc_curve, auc
+from sklearn.metrics import roc_curve, auc
 
-def plot_regression_line(X, y, model):
-    plt.figure()
-    plt.scatter(X, y, color="blue", label="Data")
-    y_pred = model.predict(X)
-    plt.plot(X, y_pred, color="red", label="Prediction")
-    plt.legend()
-    return plt
+def plot_roc_curve(y_true, y_score, model_name="Model"):
+    """
+    Plots the ROC curve given true labels and predicted scores.
+    
+    Parameters:
+        y_true (array-like): True binary labels (0/1)
+        y_score (array-like): Predicted probabilities or scores for the positive class
+        model_name (str): Name of the model for labeling the plot
 
-def plot_confusion_matrix(y_true, y_pred, labels):
-    cm = confusion_matrix(y_true, y_pred)
-    plt.figure()
-    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=labels, yticklabels=labels)
-    plt.xlabel("Predicted")
-    plt.ylabel("Actual")
-    return plt
-
-def plot_roc_curve(y_true, y_scores):
-    fpr, tpr, _ = roc_curve(y_true, y_scores)
+    Returns:
+        fig (matplotlib.figure.Figure): ROC curve figure for Streamlit display
+    """
+    # Compute ROC curve
+    fpr, tpr, thresholds = roc_curve(y_true, y_score)
     roc_auc = auc(fpr, tpr)
-    plt.figure()
-    plt.plot(fpr, tpr, label=f"AUC = {roc_auc:.2f}")
-    plt.plot([0, 1], [0, 1], linestyle="--")
-    plt.legend()
-    return plt
+
+    # Create figure
+    fig, ax = plt.subplots(figsize=(6, 5))
+    ax.plot(fpr, tpr, color='blue', lw=2, label=f'{model_name} (AUC = {roc_auc:.2f})')
+    ax.plot([0, 1], [0, 1], color='gray', lw=1, linestyle='--')
+    ax.set_xlim([0.0, 1.0])
+    ax.set_ylim([0.0, 1.05])
+    ax.set_xlabel('False Positive Rate')
+    ax.set_ylabel('True Positive Rate')
+    ax.set_title('ROC Curve')
+    ax.legend(loc="lower right")
+
+    plt.tight_layout()
+    return fig
