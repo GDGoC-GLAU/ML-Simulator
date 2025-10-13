@@ -1,18 +1,70 @@
-# Use official Python base image
-FROM python:3.11-slim
+# ML Simulator - Multi-stage Dockerfile
+# Author: Akshit
+# Date: October 13, 2025
+# Purpose: Containerize the ML Simulator application
+
+# ================================
+# Stage 1: Build Frontend
+# ================================
+FROM node:18-alpine AS frontend-build
 
 # Set working directory
+WORKDIR /app/frontend
+
+# Copy frontend package files
+COPY frontend/package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy frontend source code
+COPY frontend/ ./
+
+# Build the React app
+RUN npm run build
+
+# ================================
+# Stage 2: Backend + Frontend
+# ================================
+FROM python:3.9-slim
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create app directory
 WORKDIR /app
 
-# Copy requirements file and install dependencies
+# Copy backend requirements and install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the app files
-COPY . .
+# Copy backend code
+COPY backend/ ./backend/
 
-# Expose a port if your app runs a server (optional)
-# EXPOSE 5000
+# Copy built frontend from previous stage
+COPY --from=frontend-build /app/frontend/build ./frontend/build
 
-# Default command to run the simulator
-CMD ["python", "main.py"]
+# Create uploads directory
+RUN mkdir -p backend/uploads/datasets backend/uploads/resumes
+
+# Expose port
+EXPOSE 5000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:5000/health || exit 1
+
+# Set working directory to backend
+WORKDIR /app/backend
+
+# Run the application
+CMD ["python", "app.py"]

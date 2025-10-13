@@ -1,0 +1,77 @@
+# Docker Compose configuration for ML Simulator
+# Author: Akshit
+# Date: October 13, 2025
+
+version: '3.8'
+
+services:
+  # ML Simulator Application
+  ml-simulator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ml-simulator-app
+    ports:
+      - "5000:5000"
+      - "3000:3000"
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=production
+      - SECRET_KEY=your-secret-key-change-in-production
+      - DATABASE_URL=sqlite:///thonhub.db
+      - UPLOAD_FOLDER=/app/backend/uploads
+      - MAX_CONTENT_LENGTH=16777216
+      - CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+    volumes:
+      # Persist uploaded files
+      - uploads-data:/app/backend/uploads
+      # Persist database
+      - db-data:/app/backend/data
+    restart: unless-stopped
+    networks:
+      - ml-simulator-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: PostgreSQL Database (if needed)
+  # Uncomment if you want to use PostgreSQL instead of SQLite
+  # postgres:
+  #   image: postgres:15-alpine
+  #   container_name: ml-simulator-db
+  #   environment:
+  #     - POSTGRES_DB=thonhub
+  #     - POSTGRES_USER=thonhub
+  #     - POSTGRES_PASSWORD=your-secure-password
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #   restart: unless-stopped
+  #   networks:
+  #     - ml-simulator-network
+
+  # Optional: Redis for caching (if needed)
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: ml-simulator-cache
+  #   ports:
+  #     - "6379:6379"
+  #   restart: unless-stopped
+  #   networks:
+  #     - ml-simulator-network
+
+volumes:
+  uploads-data:
+    driver: local
+  db-data:
+    driver: local
+  # postgres-data:
+  #   driver: local
+
+networks:
+  ml-simulator-network:
+    driver: bridge
