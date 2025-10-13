@@ -378,3 +378,32 @@ st.markdown("""
     <p>🎃 Hacktoberfest Contribution | Built with Streamlit & Scikit-learn</p>
 </div>
 """, unsafe_allow_html=True)
+# In pages/Logistic_Regression.py (or any model page)
+
+import streamlit as st
+from utils.plot_helpers import plot_roc_curve, plot_confusion_matrix, plot_feature_importance
+
+# ... your existing code ...
+
+# After training the model:
+if st.button("🚀 Train Model"):
+    # ... training code ...
+    
+    # Get predictions
+    y_pred = model.predict(X_test)
+    y_pred_proba = model.predict_proba(X_test)[:, 1]
+    
+    # Display ROC Curve using helper
+    st.subheader("📈 ROC Curve")
+    roc_fig = plot_roc_curve(y_test, y_pred_proba, title="ROC Curve - Logistic Regression")
+    st.pyplot(roc_fig)
+    
+    # Display Confusion Matrix using helper
+    st.subheader("🎯 Confusion Matrix")
+    cm_fig = plot_confusion_matrix(y_test, y_pred, labels=['Class 0', 'Class 1'])
+    st.pyplot(cm_fig)
+    
+    # Display Feature Importance using helper
+    st.subheader("⭐ Feature Importance")
+    fi_fig = plot_feature_importance(selected_features, model.coef_[0])
+    st.pyplot(fi_fig)
