@@ -1,23 +1,14 @@
-# Contributing Guide
+# models/linear_regression_model.py
+from sklearn.linear_model import LinearRegression
+import numpy as np
 
-We ❤️ contributions! This project is part of **Hacktoberfest**.
+# Train a simple model for demonstration
+model = LinearRegression()
+X = np.array([[1], [2], [3], [4], [5]])
+y = np.array([2, 4, 6, 8, 10])
+model.fit(X, y)
 
-## Steps to Contribute
-1. Fork the repo
-2. Create a new branch (`git checkout -b feature-model`)
-3. Add your model/page under `/pages`
-4. Use helper functions from `/utils`
-5. Commit and push (`git push origin feature-model`)
-6. Open a Pull Request (PR)
-
-## What You Can Work On
-- Add a new ML model (e.g., Decision Tree, KNN, SVM, etc.)
-- Improve plotting helpers
-- Add more datasets to `data_helpers`
-- Enhance UI/UX in Streamlit
-
-## Labels
-- `good first issue` → beginner-friendly
-- `feature` → add a new model
-- `bug` → fix something broken
-- `documentation` → improve docs
+def predict(features):
+    arr = np.array(features).reshape(1, -1)
+    prediction = model.predict(arr)
+    return prediction.tolist()
