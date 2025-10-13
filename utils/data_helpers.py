@@ -1,30 +1,14 @@
-# utils/data_helpers.py
+from sklearn.datasets import make_classification, make_regression
+import numpy as np
 
-from sklearn.datasets import make_regression
-import pandas as pd
-
-def generate_sample_regression(n_samples=100, n_features=1, noise=0.0, random_state=None):
-    """
-    Generate a sample regression dataset.
-
-    Parameters:
-        n_samples (int): Number of data points.
-        n_features (int): Number of features.
-        noise (float): Standard deviation of Gaussian noise added to the output.
-        random_state (int or None): Random seed for reproducibility.
-
-    Returns:
-        X (pd.DataFrame): Feature dataframe of shape (n_samples, n_features)
-        y (pd.Series): Target variable of shape (n_samples,)
-    """
-    X, y = make_regression(
-        n_samples=n_samples,
-        n_features=n_features,
-        noise=noise,
-        random_state=random_state
+def get_classification_data():
+    X, y = make_classification(
+        n_samples=150, n_features=2, n_informative=2, n_redundant=0,
+        n_clusters_per_class=1, random_state=42
     )
-    # Convert to pandas for convenience
-    X_df = pd.DataFrame(X, columns=[f'feature_{i+1}' for i in range(n_features)])
-    y_series = pd.Series(y, name='target')
-    
-    return X_df, y_series
+    return X, y
+
+def get_regression_data():
+    X = np.linspace(0, 10, 100).reshape(-1, 1)
+    y = np.sin(X).ravel() + np.random.randn(100) * 0.1
+    return X, y
