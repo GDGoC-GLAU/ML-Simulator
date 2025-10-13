@@ -1,21 +1,30 @@
-# utils/data_helpers.py
-
 from sklearn.datasets import make_regression
 import pandas as pd
 
-def generate_sample_regression(n_samples=100, n_features=1, noise=0.0, random_state=None):
+def generate_sample_regression_data(
+    n_samples: int = 100,
+    n_features: int = 1,
+    noise: float = 0.1,
+    random_state: int = 42
+) -> pd.DataFrame:
     """
-    Generate a sample regression dataset.
+    Generates a synthetic regression dataset.
 
-    Parameters:
-        n_samples (int): Number of data points.
-        n_features (int): Number of features.
-        noise (float): Standard deviation of Gaussian noise added to the output.
-        random_state (int or None): Random seed for reproducibility.
+    Parameters
+    ----------
+    n_samples : int
+        Number of data samples (rows).
+    n_features : int
+        Number of input features (columns).
+    noise : float
+        Standard deviation of the Gaussian noise added to the output.
+    random_state : int
+        Random seed for reproducibility.
 
-    Returns:
-        X (pd.DataFrame): Feature dataframe of shape (n_samples, n_features)
-        y (pd.Series): Target variable of shape (n_samples,)
+    Returns
+    -------
+    pd.DataFrame
+        A DataFrame containing feature columns (X1, X2, …) and a target column 'y'.
     """
     X, y = make_regression(
         n_samples=n_samples,
@@ -23,8 +32,10 @@ def generate_sample_regression(n_samples=100, n_features=1, noise=0.0, random_st
         noise=noise,
         random_state=random_state
     )
-    # Convert to pandas for convenience
-    X_df = pd.DataFrame(X, columns=[f'feature_{i+1}' for i in range(n_features)])
-    y_series = pd.Series(y, name='target')
-    
-    return X_df, y_series
+
+    # Convert to DataFrame
+    feature_cols = [f"X{i+1}" for i in range(n_features)]
+    df = pd.DataFrame(X, columns=feature_cols)
+    df["y"] = y
+
+    return df
