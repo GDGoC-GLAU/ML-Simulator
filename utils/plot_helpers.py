@@ -1,36 +1,41 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import confusion_matrix
 
-def plot_roc_curve(y_true, y_scores):
+def plot_confusion_matrix(y_true, y_pred, labels=None, annotate=True, cmap="Blues"):
     """
-    Plots the ROC curve given true labels and predicted scores.
+    Plots a customizable confusion matrix.
 
     Parameters:
-        y_true (array-like): Ground truth binary labels (0 or 1)
-        y_scores (array-like): Predicted probabilities or decision scores
+        y_true (array-like): Ground truth labels.
+        y_pred (array-like): Predicted labels.
+        labels (list, optional): Class names to display on axes.
+        annotate (bool): Whether to show cell values.
+        cmap (str): Colormap for heatmap (e.g. 'Blues', 'Greens', 'Oranges').
 
     Returns:
-        fig (matplotlib.figure.Figure): The ROC curve figure object
+        fig (matplotlib.figure.Figure): The confusion matrix figure.
     """
 
-    # Compute ROC curve and AUC
-    fpr, tpr, thresholds = roc_curve(y_true, y_scores)
-    roc_auc = auc(fpr, tpr)
-
-    # Create a figure
+    cm = confusion_matrix(y_true, y_pred)
     fig, ax = plt.subplots(figsize=(6, 5))
     sns.set_style("whitegrid")
 
-    ax.plot(fpr, tpr, color="blue", lw=2, label=f"ROC Curve (AUC = {roc_auc:.2f})")
-    ax.plot([0, 1], [0, 1], color="gray", lw=1.5, linestyle="--", label="Random Guess")
+    sns.heatmap(
+        cm,
+        annot=annotate,
+        fmt="d" if annotate else "",
+        cmap=cmap,
+        cbar=False,
+        xticklabels=labels if labels is not None else "auto",
+        yticklabels=labels if labels is not None else "auto",
+        linewidths=0.5,
+        ax=ax,
+    )
 
-    ax.set_title("Receiver Operating Characteristic (ROC) Curve", fontsize=12)
-    ax.set_xlabel("False Positive Rate", fontsize=10)
-    ax.set_ylabel("True Positive Rate", fontsize=10)
-    ax.legend(loc="lower right")
-    ax.set_xlim([0.0, 1.0])
-    ax.set_ylim([0.0, 1.05])
+    ax.set_xlabel("Predicted Labels", fontsize=11)
+    ax.set_ylabel("True Labels", fontsize=11)
+    ax.set_title("Confusion Matrix", fontsize=13, pad=12)
 
     plt.tight_layout()
     return fig
