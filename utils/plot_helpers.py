@@ -1,28 +1,41 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.metrics import confusion_matrix, roc_curve, auc
+from sklearn.metrics import confusion_matrix
 
-def plot_regression_line(X, y, model):
-    plt.figure()
-    plt.scatter(X, y, color="blue", label="Data")
-    y_pred = model.predict(X)
-    plt.plot(X, y_pred, color="red", label="Prediction")
-    plt.legend()
-    return plt
+def plot_confusion_matrix(y_true, y_pred, labels=None, annotate=True, cmap="Blues"):
+    """
+    Plots a customizable confusion matrix.
 
-def plot_confusion_matrix(y_true, y_pred, labels):
+    Parameters:
+        y_true (array-like): Ground truth labels.
+        y_pred (array-like): Predicted labels.
+        labels (list, optional): Class names to display on axes.
+        annotate (bool): Whether to show cell values.
+        cmap (str): Colormap for heatmap (e.g. 'Blues', 'Greens', 'Oranges').
+
+    Returns:
+        fig (matplotlib.figure.Figure): The confusion matrix figure.
+    """
+
     cm = confusion_matrix(y_true, y_pred)
-    plt.figure()
-    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=labels, yticklabels=labels)
-    plt.xlabel("Predicted")
-    plt.ylabel("Actual")
-    return plt
+    fig, ax = plt.subplots(figsize=(6, 5))
+    sns.set_style("whitegrid")
 
-def plot_roc_curve(y_true, y_scores):
-    fpr, tpr, _ = roc_curve(y_true, y_scores)
-    roc_auc = auc(fpr, tpr)
-    plt.figure()
-    plt.plot(fpr, tpr, label=f"AUC = {roc_auc:.2f}")
-    plt.plot([0, 1], [0, 1], linestyle="--")
-    plt.legend()
-    return plt
+    sns.heatmap(
+        cm,
+        annot=annotate,
+        fmt="d" if annotate else "",
+        cmap=cmap,
+        cbar=False,
+        xticklabels=labels if labels is not None else "auto",
+        yticklabels=labels if labels is not None else "auto",
+        linewidths=0.5,
+        ax=ax,
+    )
+
+    ax.set_xlabel("Predicted Labels", fontsize=11)
+    ax.set_ylabel("True Labels", fontsize=11)
+    ax.set_title("Confusion Matrix", fontsize=13, pad=12)
+
+    plt.tight_layout()
+    return fig
