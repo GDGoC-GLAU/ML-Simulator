@@ -1,30 +1,36 @@
-# utils/data_helpers.py
+"""
+Data Helper Functions
+Author: Akshit
+"""
 
-from sklearn.datasets import make_regression
+from sklearn.datasets import load_iris, load_diabetes, load_breast_cancer, load_wine
 import pandas as pd
 
-def generate_sample_regression(n_samples=100, n_features=1, noise=0.0, random_state=None):
+def get_sample_dataset(name='iris'):
     """
-    Generate a sample regression dataset.
-
-    Parameters:
-        n_samples (int): Number of data points.
-        n_features (int): Number of features.
-        noise (float): Standard deviation of Gaussian noise added to the output.
-        random_state (int or None): Random seed for reproducibility.
-
-    Returns:
-        X (pd.DataFrame): Feature dataframe of shape (n_samples, n_features)
-        y (pd.Series): Target variable of shape (n_samples,)
-    """
-    X, y = make_regression(
-        n_samples=n_samples,
-        n_features=n_features,
-        noise=noise,
-        random_state=random_state
-    )
-    # Convert to pandas for convenience
-    X_df = pd.DataFrame(X, columns=[f'feature_{i+1}' for i in range(n_features)])
-    y_series = pd.Series(y, name='target')
+    Load sample datasets
     
-    return X_df, y_series
+    Parameters:
+    -----------
+    name : str
+        Dataset name: 'iris', 'diabetes', 'breast_cancer', 'wine'
+    
+    Returns:
+    --------
+    pd.DataFrame
+    """
+    if name == 'iris':
+        data = load_iris()
+    elif name == 'diabetes':
+        data = load_diabetes()
+    elif name == 'breast_cancer':
+        data = load_breast_cancer()
+    elif name == 'wine':
+        data = load_wine()
+    else:
+        raise ValueError(f"Unknown dataset: {name}")
+    
+    df = pd.DataFrame(data.data, columns=data.feature_names)
+    df['target'] = data.target
+    
+    return df, data.feature_names, data.target_names if hasattr(data, 'target_names') else None
