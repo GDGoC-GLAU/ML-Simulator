@@ -96,3 +96,9 @@ if n_classes == 2:
 else:
     st.info("ROC Curve is only available for binary classification.")
 
+
+
+
+
+
+
